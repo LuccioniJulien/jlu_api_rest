@@ -2,12 +2,13 @@
 
 namespace jlu_api_rest.Controllers
 {
-    public class ProjectController : Controller
+    public class ProjectController : ControllerBase
     {
         // GET
-        public IActionResult Index()
+        [HttpGet]
+        public IActionResult Get()
         {
-            return View();
+            return null;
         }
     }
 }

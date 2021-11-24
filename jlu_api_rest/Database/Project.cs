@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace jlu_api_rest.Database.Models
+namespace jlu_api_rest.Database
 {
     public class Project
     {
