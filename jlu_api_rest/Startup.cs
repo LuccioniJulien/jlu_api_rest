@@ -12,46 +12,58 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
 using AutoMapper;
+using jlu_api_rest.Database;
+using jlu_api_rest.Services;
+using jlu_api_rest.Services.Interfaces;
+using Microsoft.EntityFrameworkCore;
 
-namespace jlu_api_rest
+
+namespace jlu_api_rest;
+
+public class Startup
 {
-    public class Startup
+    public Startup(IConfiguration configuration)
     {
-        public Startup(IConfiguration configuration)
+        Configuration = configuration;
+    }
+
+    public IConfiguration Configuration { get; }
+
+    // This method gets called by the runtime. Use this method to add services to the container.
+    public void ConfigureServices(IServiceCollection services)
+    {
+        services.AddControllers();
+        services.AddAutoMapper(typeof(Startup));
+        services.AddSwaggerGen(c => { c.SwaggerDoc("v1", new OpenApiInfo {Title = "jlu_api_rest", Version = "v1"}); });
+        services.AddScoped<IAuthorService, AuthorService>();
+        services.AddDbContext<PfContext>(options =>
+            options.UseNpgsql(
+                "host=localhost;user id=postgres;password=3ebb24b7650e4d54a3ba28ac4ebbaacc;database=Jl;pooling=true;"));
+    }
+
+    // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
+    public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+    {
+        using (var serviceScope = app.ApplicationServices.GetService<IServiceScopeFactory>().CreateScope())
         {
-            Configuration = configuration;
+            var context = serviceScope.ServiceProvider.GetRequiredService<PfContext>();
+            context.Database.EnsureDeleted();
+            context.Database.EnsureCreated();
         }
 
-        public IConfiguration Configuration { get; }
-
-        // This method gets called by the runtime. Use this method to add services to the container.
-        public void ConfigureServices(IServiceCollection services)
+        if (env.IsDevelopment())
         {
-            services.AddControllers();
-            services.AddAutoMapper(typeof(Startup));
-            services.AddSwaggerGen(c =>
-            {
-                c.SwaggerDoc("v1", new OpenApiInfo {Title = "jlu_api_rest", Version = "v1"});
-            });
+            app.UseDeveloperExceptionPage();
+            app.UseSwagger();
+            app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "jlu_api_rest v1"));
         }
 
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
-        {
-            if (env.IsDevelopment())
-            {
-                app.UseDeveloperExceptionPage();
-                app.UseSwagger();
-                app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "jlu_api_rest v1"));
-            }
+        app.UseHttpsRedirection();
 
-            app.UseHttpsRedirection();
+        app.UseRouting();
 
-            app.UseRouting();
+        app.UseAuthorization();
 
-            app.UseAuthorization();
-
-            app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
-        }
+        app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
     }
 }
