@@ -6,6 +6,8 @@ namespace jlu_api_rest.Services.Interfaces
     public interface IAuthorService
     {
         Task<AuthorDto> Create(PostAuthorDto author);
-        AuthorDto Read(string name);
+        Task<AuthorDto> Read(string name);
+
+        Task<PostAuthorDto> Update(int id);
     }
 }

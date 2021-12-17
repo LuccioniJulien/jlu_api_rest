@@ -1,8 +1,10 @@
-﻿using System.Threading.Tasks;
+﻿using System.Linq;
+using System.Threading.Tasks;
 using AutoMapper;
 using jlu_api_rest.Database;
 using jlu_api_rest.Domain.Dto;
 using jlu_api_rest.Services.Interfaces;
+using Microsoft.EntityFrameworkCore;
 
 namespace jlu_api_rest.Services
 {
@@ -25,10 +27,15 @@ namespace jlu_api_rest.Services
             return null;
         }
 
-        public AuthorDto Read(string name)
+        public async Task<AuthorDto> Read(string name)
         {
-            Author me = new() {Id = 1, Firstname = "Luccioni", LastName = "Julien", Age = 28};
+            var me = await _context.Author.FirstOrDefaultAsync(x => x.Firstname == name);
             return me != null ? _mapper.Map<AuthorDto>(me) : null;
+        }
+
+        public Task<PostAuthorDto> Update(int id)
+        {
+            throw new System.NotImplementedException();
         }
     }
 }

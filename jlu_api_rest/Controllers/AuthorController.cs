@@ -16,17 +16,22 @@ namespace jlu_api_rest.Controllers
     public class AuthorController : ControllerBase
     {
         private IAuthorService AuthorService { get; }
+
         public AuthorController(IAuthorService authorService)
         {
             AuthorService = authorService;
         }
 
         [HttpGet("{name}")]
-        public ActionResult<Result<AuthorDto>> Get([Required] string name)
+        public async Task<ActionResult<Result<AuthorDto>>> Get([Required] string name)
         {
-            var author = AuthorService.Read(name);
+            var author = await AuthorService.Read(name);
             if (author == null) return NotFound();
-            return Ok(new Result<AuthorDto> { Data = null });
+            var value = new Result<AuthorDto>
+            {
+                Data = null
+            };
+            return Ok(value);
         }
 
         [HttpPost]
@@ -34,8 +39,13 @@ namespace jlu_api_rest.Controllers
         public async Task<ActionResult> Post(PostAuthorDto author)
         {
             await AuthorService.Create(author);
-            return Created("/", null);
+            return Created("/Author", null);
         }
 
+        [HttpPut("{id:int}")]
+        public async Task<ActionResult> Put(int id)
+        {
+            return null;
+        }
     }
 }
