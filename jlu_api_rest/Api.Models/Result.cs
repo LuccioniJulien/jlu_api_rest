@@ -1,8 +1,7 @@
-﻿namespace jlu_api_rest.Api.Models
+﻿namespace jlu_api_rest.Api.Models;
+
+public class Result
 {
-    public struct Result<T>
-    {
-        public T Data { get; set; }
-        public int Status { get; set; }
-    }
+    public int Status { get; set; }
+    public string Description { get; set; }
 }

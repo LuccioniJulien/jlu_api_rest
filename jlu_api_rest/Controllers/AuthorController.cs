@@ -23,11 +23,11 @@ namespace jlu_api_rest.Controllers
         }
 
         [HttpGet("{name}")]
-        public async Task<ActionResult<Result<AuthorDto>>> Get([Required] string name)
+        public async Task<ActionResult<ResultData<AuthorDto>>> Get([Required] string name)
         {
             var author = await AuthorService.Read(name);
             if (author == null) return NotFound();
-            var value = new Result<AuthorDto>
+            var value = new ResultData<AuthorDto>
             {
                 Data = null
             };
