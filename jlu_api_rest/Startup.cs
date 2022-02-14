@@ -40,6 +40,7 @@ public class Startup
         }));
         services.AddControllers();
         services.AddAutoMapper(typeof(Startup));
+        services.AddRazorPages();
         services.AddSwaggerGen(c => { c.SwaggerDoc("v1", new OpenApiInfo {Title = "jlu_api_rest", Version = "v1"}); });
         services.AddScoped<IAuthorService, AuthorService>();
         services.AddDbContext<PfContext>(options =>
@@ -63,14 +64,19 @@ public class Startup
             app.UseSwagger();
             app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "jlu_api_rest v1"));
         }
+
         app.UseCors("MyPolicy");
-        
+
         app.UseHttpsRedirection();
 
         app.UseRouting();
 
         app.UseAuthorization();
 
-        app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
+        app.UseEndpoints(endpoints =>
+        {
+            endpoints.MapControllers();
+            endpoints.MapRazorPages();
+        });
     }
 }
