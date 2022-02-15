@@ -65,14 +65,11 @@ public class Startup
             app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "jlu_api_rest v1"));
         }
 
+        app.UseStaticFiles();
         app.UseCors("MyPolicy");
-
         app.UseHttpsRedirection();
-
         app.UseRouting();
-
         app.UseAuthorization();
-
         app.UseEndpoints(endpoints =>
         {
             endpoints.MapControllers();
